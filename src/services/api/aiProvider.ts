@@ -5,7 +5,7 @@
  * Supports multiple AI providers: OpenAI, Claude, Gemini, Ollama
  */
 
-import type { AIProvider, WSMessage, WSRequest, WSResponse } from '@/types';
+import type { AIProvider, WSMessage, WSRequest } from '@/types';
 
 export interface ProviderConfig {
   provider: AIProvider;

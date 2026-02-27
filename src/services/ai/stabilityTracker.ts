@@ -53,13 +53,13 @@ export function calculateStability(
   // 2. Decision Reuse Rate (higher is better)
   const decisionReuseRate = calculateDecisionReuseRate(
     currentRound.plan,
-    previousRound?.plan
+    previousRound?.plan ?? null
   );
 
   // 3. Plan Similarity (higher is better - means converging)
   const planSimilarity = calculatePlanSimilarity(
     currentRound.plan,
-    previousRound?.plan
+    previousRound?.plan ?? null
   );
 
   // 4. Goal Convergence (based on vs_goal evaluation)

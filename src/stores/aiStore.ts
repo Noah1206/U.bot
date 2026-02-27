@@ -84,7 +84,7 @@ const initialRoundState: RoundState = {
   locked_structure: null,
 };
 
-export const useAIStore = create<AIState>((set, get) => ({
+export const useAIStore = create<AIState>((set) => ({
   // Agents
   agents: defaultAgents,
   activeAgentId: null,

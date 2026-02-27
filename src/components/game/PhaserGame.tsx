@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
 import Phaser from 'phaser';
-import { useAIStore } from '@/stores/aiStore';
 
 // Agent configuration
 interface AgentConfig {
@@ -27,7 +26,6 @@ class MainScene extends Phaser.Scene {
     config: AgentConfig;
   }> = new Map();
   private connections: Phaser.GameObjects.Graphics | null = null;
-  private particles: Map<string, Phaser.GameObjects.Particles.ParticleEmitter> = new Map();
   private starField: Phaser.GameObjects.Graphics | null = null;
 
   constructor() {

@@ -27,7 +27,6 @@ import {
 
 import {
   calculateStability,
-  shouldAutoTerminate,
   getStabilityStatus,
   createStabilityBreakdown,
 } from './stabilityTracker';
