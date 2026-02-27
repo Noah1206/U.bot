@@ -203,22 +203,23 @@ EOF
     echo -e "${GREEN}  $APP_NAME installed successfully!${NC}"
     echo -e "${GREEN}═══════════════════════════════════════════════════════════${NC}"
     echo ""
-    echo "  To start the app:"
-    case "$EXT" in
-        dmg)
-            echo "    • Open 'AI Life Layer' from Applications"
-            echo "    • Or run: open '/Applications/AI Life Layer.app'"
-            ;;
-        AppImage)
-            echo "    • Run: ai-life-layer"
-            ;;
-        exe)
-            echo "    • Open 'AI Life Layer' from Start Menu"
-            ;;
-    esac
-    echo ""
     echo "  Documentation: https://github.com/$REPO"
     echo ""
+
+    # Auto-launch the app
+    print_step "Launching $APP_NAME..."
+    case "$EXT" in
+        dmg)
+            open "/Applications/AI Life Layer.app"
+            ;;
+        AppImage)
+            nohup ai-life-layer > /dev/null 2>&1 &
+            ;;
+        exe)
+            # Windows installer typically auto-launches
+            ;;
+    esac
+    echo -e "${GREEN}✓${NC} App launched!"
 }
 
 # Uninstall
