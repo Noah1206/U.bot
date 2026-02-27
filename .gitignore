@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Build outputs
+dist/
+src-tauri/target/
+*.dmg
+*.AppImage
+*.exe
+*.msi
+*.deb
+*.rpm
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test
+coverage/
+.pytest_cache/
+
+# Misc
+*.bak
+*.tmp

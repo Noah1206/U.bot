@@ -1,0 +1,134 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html, body, #root {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    font-family: 'Consolas', 'Monaco', monospace;
+    background-color: #0a0a0f;
+    color: #ffffff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #111118;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #2a2a3a;
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #3a3a4a;
+  }
+}
+
+@layer components {
+  .pixel-text {
+    font-family: 'Press Start 2P', cursive;
+    letter-spacing: 1px;
+  }
+
+  .pixel-border {
+    border: 2px solid #1a1a24;
+    image-rendering: pixelated;
+  }
+
+  .glow-blue {
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+  }
+
+  .glow-cyan {
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.3);
+  }
+
+  .glow-purple {
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+  }
+
+  .glow-pink {
+    box-shadow: 0 0 10px rgba(236, 72, 153, 0.3);
+  }
+
+  .card {
+    @apply bg-app-card border border-app-border rounded-lg p-4;
+  }
+
+  .btn-primary {
+    @apply bg-accent-blue hover:bg-accent-blue/80 text-white font-medium py-2 px-4 rounded transition-all duration-200;
+  }
+
+  .btn-secondary {
+    @apply bg-app-card hover:bg-app-border text-text-secondary border border-app-border py-2 px-4 rounded transition-all duration-200;
+  }
+
+  .input-field {
+    @apply bg-app-card border border-app-border rounded-lg px-4 py-3 text-white placeholder-text-muted focus:outline-none focus:border-accent-blue transition-colors;
+  }
+
+  /* Message bubbles */
+  .message-user {
+    @apply bg-message-user rounded-lg p-4 ml-8;
+  }
+
+  .message-ai {
+    @apply bg-message-ai rounded-lg p-4 mr-8;
+  }
+
+  /* Code block */
+  .code-block {
+    @apply bg-black/50 rounded-lg p-4 font-mono text-sm overflow-x-auto;
+  }
+
+  /* Status indicators */
+  .status-dot {
+    @apply w-2 h-2 rounded-full;
+  }
+
+  .status-active {
+    @apply bg-accent-green animate-pulse;
+  }
+
+  .status-idle {
+    @apply bg-accent-yellow;
+  }
+
+  .status-error {
+    @apply bg-accent-red;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-blue to-accent-cyan;
+  }
+
+  .bg-gradient-dark {
+    background: linear-gradient(135deg, #0a0a0f 0%, #111118 100%);
+  }
+
+  .border-glow {
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.1);
+  }
+}
