@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # AI Life Layer Installer
-# Usage: curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/ai-life-layer/main/scripts/install.sh | bash
+# Usage: curl -fsSL https://raw.githubusercontent.com/Noah1206/U.bot/main/scripts/install.sh | bash
 #
 
 set -e
@@ -54,7 +54,7 @@ detect_platform() {
         Linux*)
             PLATFORM="linux"
             case "$ARCH" in
-                x86_64) ARCH="x86_64" ;;
+                x86_64) ARCH="amd64" ;;
                 aarch64|arm64) ARCH="aarch64" ;;
                 *) print_error "Unsupported architecture: $ARCH"; exit 1 ;;
             esac
@@ -62,14 +62,14 @@ detect_platform() {
         Darwin*)
             PLATFORM="darwin"
             case "$ARCH" in
-                x86_64) ARCH="x86_64" ;;
+                x86_64) ARCH="x64" ;;
                 arm64) ARCH="aarch64" ;;
                 *) print_error "Unsupported architecture: $ARCH"; exit 1 ;;
             esac
             ;;
         MINGW*|MSYS*|CYGWIN*)
             PLATFORM="windows"
-            ARCH="x86_64"
+            ARCH="x64"
             ;;
         *)
             print_error "Unsupported operating system: $OS"
@@ -84,7 +84,8 @@ detect_platform() {
 get_latest_version() {
     curl -s "https://api.github.com/repos/$REPO/releases/latest" | \
         grep '"tag_name":' | \
-        sed -E 's/.*"([^"]+)".*/\1/'
+        sed -E 's/.*"([^"]+)".*/\1/' | \
+        sed 's/^v//'
 }
 
 # Download and install
@@ -98,31 +99,32 @@ install() {
     print_step "Fetching latest version..."
     VERSION=$(get_latest_version)
     if [ -z "$VERSION" ]; then
-        VERSION="v0.1.0"
+        VERSION="0.1.0"
         print_warning "Could not fetch latest version, using $VERSION"
     fi
     echo "  Version: $VERSION"
 
     # Determine download URL and file extension
+    # Actual file names: AI.Life.Layer_0.1.0_aarch64.dmg, AI.Life.Layer_0.1.0_amd64.AppImage, etc.
     case "$PLATFORM_ARCH" in
-        darwin-x86_64)
-            DOWNLOAD_URL="https://github.com/$REPO/releases/download/$VERSION/ai-life-layer_${VERSION}_x64.dmg"
+        darwin-x64)
+            DOWNLOAD_URL="https://github.com/$REPO/releases/download/v${VERSION}/AI.Life.Layer_${VERSION}_x64.dmg"
             EXT="dmg"
             ;;
         darwin-aarch64)
-            DOWNLOAD_URL="https://github.com/$REPO/releases/download/$VERSION/ai-life-layer_${VERSION}_aarch64.dmg"
+            DOWNLOAD_URL="https://github.com/$REPO/releases/download/v${VERSION}/AI.Life.Layer_${VERSION}_aarch64.dmg"
             EXT="dmg"
             ;;
-        linux-x86_64)
-            DOWNLOAD_URL="https://github.com/$REPO/releases/download/$VERSION/ai-life-layer_${VERSION}_amd64.AppImage"
+        linux-amd64)
+            DOWNLOAD_URL="https://github.com/$REPO/releases/download/v${VERSION}/AI.Life.Layer_${VERSION}_amd64.AppImage"
             EXT="AppImage"
             ;;
         linux-aarch64)
-            DOWNLOAD_URL="https://github.com/$REPO/releases/download/$VERSION/ai-life-layer_${VERSION}_aarch64.AppImage"
+            DOWNLOAD_URL="https://github.com/$REPO/releases/download/v${VERSION}/AI.Life.Layer_${VERSION}_aarch64.AppImage"
             EXT="AppImage"
             ;;
-        windows-x86_64)
-            DOWNLOAD_URL="https://github.com/$REPO/releases/download/$VERSION/ai-life-layer_${VERSION}_x64-setup.exe"
+        windows-x64)
+            DOWNLOAD_URL="https://github.com/$REPO/releases/download/v${VERSION}/AI.Life.Layer_${VERSION}_x64-setup.exe"
             EXT="exe"
             ;;
         *)
@@ -135,6 +137,7 @@ install() {
     mkdir -p "$APP_DIR"
 
     print_step "Downloading $APP_NAME $VERSION..."
+    echo "  URL: $DOWNLOAD_URL"
     TEMP_FILE="$APP_DIR/ai-life-layer.$EXT"
 
     if command -v curl &> /dev/null; then
@@ -151,17 +154,21 @@ install() {
         dmg)
             # macOS: Mount DMG and copy app
             MOUNT_POINT="/Volumes/AILifeLayer"
-            hdiutil attach "$TEMP_FILE" -quiet -mountpoint "$MOUNT_POINT"
-            cp -R "$MOUNT_POINT/AI Life Layer.app" "/Applications/"
-            hdiutil detach "$MOUNT_POINT" -quiet
-            rm "$TEMP_FILE"
-            echo -e "${GREEN}✓${NC} Installed to /Applications/AI Life Layer.app"
+            hdiutil attach "$TEMP_FILE" -quiet -nobrowse -mountpoint "$MOUNT_POINT" 2>/dev/null || {
+                # Try alternative mount
+                hdiutil attach "$TEMP_FILE" -quiet
+                MOUNT_POINT=$(ls -d /Volumes/*Life* 2>/dev/null | head -1)
+            }
 
-            # Create CLI symlink
-            if [ -w "$INSTALL_DIR" ]; then
-                ln -sf "/Applications/AI Life Layer.app/Contents/MacOS/AI Life Layer" "$INSTALL_DIR/ai-life-layer"
-                echo -e "${GREEN}✓${NC} CLI available: ai-life-layer"
+            if [ -d "$MOUNT_POINT" ]; then
+                APP_PATH=$(find "$MOUNT_POINT" -name "*.app" -maxdepth 1 | head -1)
+                if [ -n "$APP_PATH" ]; then
+                    cp -R "$APP_PATH" "/Applications/"
+                    echo -e "${GREEN}✓${NC} Installed to /Applications/"
+                fi
+                hdiutil detach "$MOUNT_POINT" -quiet 2>/dev/null || true
             fi
+            rm -f "$TEMP_FILE"
             ;;
         AppImage)
             # Linux: Make executable and move
@@ -180,7 +187,6 @@ install() {
 Name=AI Life Layer
 Comment=Production-Hardened AI Orchestration System
 Exec=$INSTALL_DIR/ai-life-layer
-Icon=$APP_DIR/icon.png
 Type=Application
 Categories=Development;Utility;
 EOF
@@ -201,7 +207,7 @@ EOF
     case "$EXT" in
         dmg)
             echo "    • Open 'AI Life Layer' from Applications"
-            echo "    • Or run: ai-life-layer"
+            echo "    • Or run: open '/Applications/AI Life Layer.app'"
             ;;
         AppImage)
             echo "    • Run: ai-life-layer"
